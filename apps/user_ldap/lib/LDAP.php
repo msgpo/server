@@ -191,7 +191,16 @@ class LDAP implements ILDAPWrapper {
 	 * @return mixed
 	 */
 	public function search($link, $baseDN, $filter, $attr, $attrsOnly = 0, $limit = 0) {
-		return $this->invokeLDAPMethod('search', $link, $baseDN, $filter, $attr, $attrsOnly, $limit);
+		$oldHandler = set_error_handler(function($no, $message, $file, $line) use (&$oldHandler) {
+			if(strpos($message, 'Partial search results returned: Sizelimit exceeded') !== false) {
+				return true;
+			}
+			$oldHandler($no, $message, $file, $line);
+			return true;
+		});
+		$result = $this->invokeLDAPMethod('search', $link, $baseDN, $filter, $attr, $attrsOnly, $limit);
+		restore_error_handler();
+		return $result;
 	}
 
 	/**
