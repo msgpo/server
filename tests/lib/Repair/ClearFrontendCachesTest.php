@@ -24,6 +24,7 @@
 namespace Test\Repair;
 use OC\Template\JSCombiner;
 use OC\Template\SCSSCacher;
+use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\Migration\IOutput;
@@ -39,6 +40,9 @@ class ClearFrontendCachesTest extends \Test\TestCase {
 	/** @var JSCombiner */
 	private $jsCombiner;
 
+	/** @var IAvatarManager */
+	private $avatarManager;
+
 	/** @var \OC\Repair\ClearFrontendCaches */
 	protected $repair;
 
@@ -53,8 +57,9 @@ class ClearFrontendCachesTest extends \Test\TestCase {
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->scssCacher = $this->createMock(SCSSCacher::class);
 		$this->jsCombiner = $this->createMock(JSCombiner::class);
+		$this->avatarManager = $this->createMock(IAvatarManager::class);
 
-		$this->repair = new \OC\Repair\ClearFrontendCaches($this->cacheFactory, $this->scssCacher, $this->jsCombiner);
+		$this->repair = new \OC\Repair\ClearFrontendCaches($this->cacheFactory, $this->scssCacher, $this->jsCombiner, $this->avatarManager);
 	}
 
 

@@ -23,11 +23,12 @@
 
 namespace OC\Repair;
 
-use OC\Template\JSCombiner;
-use OC\Template\SCSSCacher;
+use OCP\IAvatarManager;
 use OCP\ICacheFactory;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
+use OC\Template\JSCombiner;
+use OC\Template\SCSSCacher;
 
 class ClearFrontendCaches implements IRepairStep {
 
@@ -40,12 +41,17 @@ class ClearFrontendCaches implements IRepairStep {
 	/** @var JSCombiner */
 	protected $jsCombiner;
 
+	/** @var IAvatarManager */
+	protected $avatarManager;
+
 	public function __construct(ICacheFactory $cacheFactory,
 								SCSSCacher $SCSSCacher,
-								JSCombiner $JSCombiner) {
-		$this->cacheFactory = $cacheFactory;
-		$this->scssCacher = $SCSSCacher;
-		$this->jsCombiner = $JSCombiner;
+								JSCombiner $JSCombiner,
+								IAvatarManager $avatarManager) {
+		$this->cacheFactory  = $cacheFactory;
+		$this->scssCacher    = $SCSSCacher;
+		$this->jsCombiner    = $JSCombiner;
+		$this->avatarManager = $avatarManager;
 	}
 
 	public function getName() {
@@ -57,6 +63,9 @@ class ClearFrontendCaches implements IRepairStep {
 			$c = $this->cacheFactory->createDistributed('imagePath');
 			$c->clear();
 			$output->info('Image cache cleared');
+
+			$this->avatarManager->clearCachedAvatars();
+			$output->info('Avatar cache cleared');
 
 			$this->scssCacher->resetCache();
 			$output->info('SCSS cache cleared');
